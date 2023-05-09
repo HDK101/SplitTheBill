@@ -11,6 +11,7 @@ import android.view.Menu
 import android.view.MenuItem
 import android.view.View
 import android.widget.AdapterView
+import android.widget.Toast
 import androidx.activity.result.ActivityResultLauncher
 import androidx.activity.result.contract.ActivityResultContracts
 import br.scl.ifsp.splitthebill.R
@@ -19,7 +20,7 @@ import br.scl.ifsp.splitthebill.adapter.PersonAdapter
 import br.scl.ifsp.splitthebill.databinding.ActivityMainBinding
 import br.scl.ifsp.splitthebill.model.Person
 
-class MainActivity : AppCompatActivity() {
+class MainActivity : BaseActivity() {
     private val amb: ActivityMainBinding by lazy { ActivityMainBinding.inflate(layoutInflater) }
     private var personList = mutableListOf<Person>()
     private lateinit var billAdapter: PersonAdapter
@@ -28,7 +29,7 @@ class MainActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(amb.root)
 
-        personList = (applicationContext as SplitTheBillApplication).getPersonRoom().getPersonDao().retrieve()
+//        personList = (applicationContext as SplitTheBillApplication).getPersonRoom().getPersonDao().retrieve()
         updatePersonPerPay()
         billAdapter = PersonAdapter(this, personList)
         amb.list.adapter = billAdapter
@@ -43,8 +44,8 @@ class MainActivity : AppCompatActivity() {
             AdapterView.OnItemClickListener { p0, p1, position, p3 ->
                 val person = personList[position]
                 val personIntent = Intent(this@MainActivity, PersonActivity::class.java)
-                personIntent.putExtra("walter", person)
-                personIntent.putExtra("operation", PersonActivity.Operation.EDIT)
+                personIntent.putExtra(EXTRA_PERSON, person)
+                personIntent.putExtra(EXTRA_OPERATION, PersonActivity.Operation.EDIT)
                 carl.launch(personIntent)
             }
 
@@ -55,7 +56,7 @@ class MainActivity : AppCompatActivity() {
         return when(item.itemId) {
             R.id.addPerson -> {
                 val personIntent = Intent(this@MainActivity, PersonActivity::class.java)
-                personIntent.putExtra("operation", PersonActivity.Operation.CREATE)
+                personIntent.putExtra(EXTRA_OPERATION, PersonActivity.Operation.CREATE)
                 carl.launch(personIntent)
                 true
             }
@@ -69,6 +70,28 @@ class MainActivity : AppCompatActivity() {
         menuInfo: ContextMenu.ContextMenuInfo?
     ) {
         menuInflater.inflate(R.menu.menu_person, menu)
+    }
+
+    override fun onContextItemSelected(item: MenuItem): Boolean {
+        val position = (item.menuInfo as AdapterView.AdapterContextMenuInfo).position
+        val person = personList[position]
+
+        return when(item.itemId) {
+            R.id.editPerson -> {
+                val personIntent = Intent(this@MainActivity, PersonActivity::class.java)
+                personIntent.putExtra(EXTRA_OPERATION, PersonActivity.Operation.EDIT)
+                personIntent.putExtra(EXTRA_PERSON, person)
+                carl.launch(personIntent)
+                true
+            }
+            R.id.deletePerson -> {
+//                (applicationContext as SplitTheBillApplication).getPersonRoom().getPersonDao().delete(person)
+                Toast.makeText(this, "Pessoa removida", Toast.LENGTH_SHORT).show()
+                refreshPersonList()
+                true
+            }
+            else -> false
+        }
     }
 
     override fun onCreateOptionsMenu(menu: Menu?): Boolean {
@@ -93,7 +116,7 @@ class MainActivity : AppCompatActivity() {
 
     fun refreshPersonList() {
         personList.clear()
-        personList.addAll((applicationContext as SplitTheBillApplication).getPersonRoom().getPersonDao().retrieve())
+//        personList.addAll((applicationContext as SplitTheBillApplication).getPersonRoom().getPersonDao().retrieve())
         updatePersonPerPay()
 
         billAdapter.notifyDataSetChanged()

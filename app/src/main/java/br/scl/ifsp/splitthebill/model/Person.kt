@@ -11,6 +11,7 @@ import kotlinx.parcelize.Parcelize
 data class Person(
     @PrimaryKey(autoGenerate = true) var id: Int?,
     @NonNull var name: String,
+    @NonNull var bought: String,
     @NonNull val spent: Double,
     @NonNull var toPay: Double
 ) : Parcelable

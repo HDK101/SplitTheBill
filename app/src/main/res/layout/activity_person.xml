@@ -12,7 +12,7 @@
         app:layout_constraintTop_toTopOf="parent"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:hint="Nome"
+        android:hint="@string/name"
         />
     <EditText
         android:id="@+id/spentEditText"
@@ -20,35 +20,26 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:inputType="numberDecimal"
-        android:hint="Gasto"
+        android:hint="@string/spent"
         />
-    <TextView
-        android:id="@+id/toPayTextView"
+    <EditText
+        android:id="@+id/boughtEditText"
         app:layout_constraintTop_toBottomOf="@id/spentEditText"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="Total para pagar"
+        android:hint="@string/bought"
+        />
+    <TextView
+        android:id="@+id/toPayTextView"
+        app:layout_constraintTop_toBottomOf="@id/boughtEditText"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
         />
     <Button
         android:id="@+id/createButton"
         app:layout_constraintTop_toBottomOf="@id/toPayTextView"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="Criar"
-        />
-    <Button
-        android:id="@+id/updateButton"
-        app:layout_constraintTop_toBottomOf="@id/createButton"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:text="Atualizar"
-        />
-    <Button
-        android:id="@+id/deleteButton"
-        app:layout_constraintTop_toBottomOf="@id/updateButton"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:text="Apagar"
         />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

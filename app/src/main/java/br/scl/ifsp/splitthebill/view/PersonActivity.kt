@@ -11,15 +11,18 @@ import android.view.View
 import androidx.appcompat.app.AppCompatActivity
 import br.scl.ifsp.splitthebill.R
 import br.scl.ifsp.splitthebill.SplitTheBillApplication
+import br.scl.ifsp.splitthebill.controller.PersonController
 import br.scl.ifsp.splitthebill.databinding.ActivityPersonBinding
 import br.scl.ifsp.splitthebill.model.Person
 import kotlinx.parcelize.Parcelize
 
-class PersonActivity: AppCompatActivity() {
+class PersonActivity : BaseActivity() {
     enum class Operation {
         CREATE,
         EDIT
     }
+
+    private val personController: PersonController by lazy { PersonController(this) }
 
     private val abb: ActivityPersonBinding by lazy { ActivityPersonBinding.inflate(layoutInflater) }
 
@@ -28,69 +31,64 @@ class PersonActivity: AppCompatActivity() {
         setContentView(abb.root)
 
         val receivedPerson = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
-            intent.getParcelableExtra("walter", Person::class.java)
-        }
-        else {
-            intent.getParcelableExtra("walter")
+            intent.getParcelableExtra(EXTRA_PERSON, Person::class.java)
+        } else {
+            intent.getParcelableExtra(EXTRA_PERSON)
         }
 
         val operation = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
-            intent.getSerializableExtra("operation", Operation::class.java)
-        }
-        else {
-            intent.getSerializableExtra("operation")
+            intent.getSerializableExtra(EXTRA_OPERATION, Operation::class.java)
+        } else {
+            intent.getSerializableExtra(EXTRA_OPERATION)
         }
 
-        if (operation == Operation.EDIT) {
-            abb.updateButton.visibility = View.VISIBLE
-            abb.deleteButton.visibility = View.VISIBLE
-            abb.createButton.visibility = View.INVISIBLE
-        }
-        else {
-            abb.updateButton.visibility = View.INVISIBLE
-            abb.deleteButton.visibility = View.INVISIBLE
-            abb.createButton.visibility = View.VISIBLE
+        abb.createButton.text = if (operation == Operation.CREATE) {
+            "Criar"
+        } else {
+            "Atualizar"
         }
 
         if (receivedPerson != null) {
             abb.nameEditText.setText(receivedPerson.name)
             abb.spentEditText.setText(receivedPerson.spent.toString())
+            abb.boughtEditText.setText(receivedPerson.bought.toString())
             abb.toPayTextView.text = receivedPerson.toPay.toString()
         }
 
         abb.createButton.setOnClickListener {
-            (applicationContext as SplitTheBillApplication).getPersonRoom().getPersonDao().create(Person(
-                null,
-                abb.nameEditText.getText().toString(),
-                abb.spentEditText.getText().toString().toDouble(),
-                0.0,
-            ))
-
-            setResult(Activity.RESULT_OK)
-            finish()
-        }
-
-        abb.updateButton.setOnClickListener {
-            if (receivedPerson != null) {
-                (applicationContext as SplitTheBillApplication).getPersonRoom().getPersonDao().update(Person(
-                    receivedPerson.id,
-                    abb.nameEditText.getText().toString(),
-                    abb.spentEditText.getText().toString().toDouble(),
-                    receivedPerson.toPay,
-                ))
+            if (operation == Operation.CREATE) {
+                personController.create(
+                    Person(
+                        null,
+                        abb.nameEditText.text.toString(),
+                        abb.boughtEditText.text.toString(),
+                        abb.spentEditText.text.toString().toDouble(),
+                        0.0,
+                    )
+                ) { person ->
+                    finish()
+                }
+            } else if (operation == Operation.EDIT) {
+                if (receivedPerson != null) {
+                    updatePerson(receivedPerson)
+                }
             }
 
             setResult(Activity.RESULT_OK)
             finish()
         }
+    }
 
-        abb.deleteButton.setOnClickListener {
-            if (receivedPerson != null) {
-                (applicationContext as SplitTheBillApplication).getPersonRoom().getPersonDao().delete(receivedPerson)
-            }
-
-            setResult(Activity.RESULT_OK)
-            finish()
-        }
+    private fun updatePerson(receivedPerson: Person) {
+//        (applicationContext as SplitTheBillApplication).getPersonRoom().getPersonDao()
+//            .update(
+//                Person(
+//                    receivedPerson.id,
+//                    abb.nameEditText.getText().toString(),
+//                    abb.boughtEditText.text.toString(),
+//                    abb.spentEditText.getText().toString().toDouble(),
+//                    receivedPerson.toPay,
+//                )
+//            )
     }
 }
