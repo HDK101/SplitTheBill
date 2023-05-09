@@ -6,24 +6,21 @@
     android:padding="20dp"
     >
     <TextView
-        android:id="@+id/billName"
+        android:id="@+id/personNameText"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginEnd="20dp"
-        android:text="Nome da conta"
         />
     <TextView
-        android:id="@+id/billTotalValue"
+        android:id="@+id/personSpentValueText"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginEnd="20dp"
-        android:text="Valor total: R$ 160"
         />
     <TextView
-        android:id="@+id/billPersons"
+        android:id="@+id/personToPayText"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginEnd="20dp"
-        android:text="4 pessoas(R$ 40)"
         />
 </LinearLayout>
