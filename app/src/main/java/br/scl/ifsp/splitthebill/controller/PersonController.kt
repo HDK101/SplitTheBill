@@ -16,20 +16,30 @@ class PersonController(context: Context) {
         personDao = personRoom.getPersonDao()
     }
 
-    fun list(callback: (person: Person) -> Unit) {
+    fun list(callback: (person: List<Person>) -> Unit) {
         Thread {
-            ca
+            callback(personDao.retrieve())
         }.start()
     }
 
-    fun create(person: Person, callback: (person: Person) -> Unit) {
+    fun create(person: Person, callback: () -> Unit) {
         Thread {
             personDao.create(person)
-            callback(person)
+            callback()
         }.start()
     }
 
-    fun getPersonDao(): PersonDao {
-        return personRoom.getPersonDao()
+    fun update(person: Person, callback: () -> Unit) {
+        Thread {
+            personDao.update(person)
+            callback()
+        }.start()
+    }
+
+    fun delete(person: Person, callback: () -> Unit) {
+        Thread {
+            personDao.delete(person)
+            callback()
+        }.start()
     }
 }

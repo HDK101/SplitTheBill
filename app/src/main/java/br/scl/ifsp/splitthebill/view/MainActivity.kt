@@ -17,11 +17,13 @@ import androidx.activity.result.contract.ActivityResultContracts
 import br.scl.ifsp.splitthebill.R
 import br.scl.ifsp.splitthebill.SplitTheBillApplication
 import br.scl.ifsp.splitthebill.adapter.PersonAdapter
+import br.scl.ifsp.splitthebill.controller.PersonController
 import br.scl.ifsp.splitthebill.databinding.ActivityMainBinding
 import br.scl.ifsp.splitthebill.model.Person
 
 class MainActivity : BaseActivity() {
     private val amb: ActivityMainBinding by lazy { ActivityMainBinding.inflate(layoutInflater) }
+    private val personController: PersonController by lazy { PersonController(this) }
     private var personList = mutableListOf<Person>()
     private lateinit var billAdapter: PersonAdapter
     private lateinit var carl: ActivityResultLauncher<Intent>
@@ -30,9 +32,9 @@ class MainActivity : BaseActivity() {
         setContentView(amb.root)
 
 //        personList = (applicationContext as SplitTheBillApplication).getPersonRoom().getPersonDao().retrieve()
-        updatePersonPerPay()
         billAdapter = PersonAdapter(this, personList)
         amb.list.adapter = billAdapter
+        refreshPersonList()
 
         carl = registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
             if (result.resultCode == Activity.RESULT_OK) {
@@ -85,9 +87,12 @@ class MainActivity : BaseActivity() {
                 true
             }
             R.id.deletePerson -> {
-//                (applicationContext as SplitTheBillApplication).getPersonRoom().getPersonDao().delete(person)
-                Toast.makeText(this, "Pessoa removida", Toast.LENGTH_SHORT).show()
-                refreshPersonList()
+                personController.delete(person) {
+                    runOnUiThread {
+                        refreshPersonList()
+                        Toast.makeText(this, "Pessoa removida", Toast.LENGTH_SHORT).show()
+                    }
+                }
                 true
             }
             else -> false
@@ -100,6 +105,8 @@ class MainActivity : BaseActivity() {
     }
 
     fun updatePersonPerPay() {
+        supportActionBar?.subtitle = ""
+
         if (personList.isEmpty()) return
 
         val total = personList
@@ -115,10 +122,13 @@ class MainActivity : BaseActivity() {
     }
 
     fun refreshPersonList() {
-        personList.clear()
-//        personList.addAll((applicationContext as SplitTheBillApplication).getPersonRoom().getPersonDao().retrieve())
-        updatePersonPerPay()
-
-        billAdapter.notifyDataSetChanged()
+        personController.list { persons ->
+            personList.clear()
+            personList.addAll(persons)
+            runOnUiThread {
+                updatePersonPerPay()
+                billAdapter.notifyDataSetChanged()
+            }
+        }
     }
 }

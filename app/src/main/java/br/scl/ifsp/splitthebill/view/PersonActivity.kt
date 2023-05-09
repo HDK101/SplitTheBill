@@ -51,7 +51,7 @@ class PersonActivity : BaseActivity() {
         if (receivedPerson != null) {
             abb.nameEditText.setText(receivedPerson.name)
             abb.spentEditText.setText(receivedPerson.spent.toString())
-            abb.boughtEditText.setText(receivedPerson.bought.toString())
+            abb.boughtEditText.setText(receivedPerson.bought)
             abb.toPayTextView.text = receivedPerson.toPay.toString()
         }
 
@@ -65,30 +65,26 @@ class PersonActivity : BaseActivity() {
                         abb.spentEditText.text.toString().toDouble(),
                         0.0,
                     )
-                ) { person ->
+                ) {
+                    setResult(Activity.RESULT_OK)
                     finish()
                 }
             } else if (operation == Operation.EDIT) {
                 if (receivedPerson != null) {
-                    updatePerson(receivedPerson)
+                    personController.update(
+                        Person(
+                            receivedPerson.id,
+                            abb.nameEditText.text.toString(),
+                            abb.boughtEditText.text.toString(),
+                            abb.spentEditText.text.toString().toDouble(),
+                            receivedPerson.toPay,
+                        )
+                    ) {
+                        setResult(Activity.RESULT_OK)
+                        finish()
+                    }
                 }
             }
-
-            setResult(Activity.RESULT_OK)
-            finish()
         }
-    }
-
-    private fun updatePerson(receivedPerson: Person) {
-//        (applicationContext as SplitTheBillApplication).getPersonRoom().getPersonDao()
-//            .update(
-//                Person(
-//                    receivedPerson.id,
-//                    abb.nameEditText.getText().toString(),
-//                    abb.boughtEditText.text.toString(),
-//                    abb.spentEditText.getText().toString().toDouble(),
-//                    receivedPerson.toPay,
-//                )
-//            )
     }
 }
