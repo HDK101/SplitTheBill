@@ -3,4 +3,9 @@
     <string name="name">Nome</string>
     <string name="spent">Gasto</string>
     <string name="bought">Comprou</string>
+    <string name="add_person">Adicionar pessoa</string>
+    <string name="clear_all">Limpar</string>
+    <string name="bought_template">Comprou: %1$s</string>
+    <string name="spent_template">Gastou: R$ %1$s</string>
+    <string name="to_pay_template">%1$s: R$ %2$s"</string>
 </resources>

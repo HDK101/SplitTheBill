@@ -42,4 +42,11 @@ class PersonController(context: Context) {
             callback()
         }.start()
     }
+
+    fun clear(callback: () -> Unit) {
+        Thread {
+            personDao.clear()
+            callback()
+        }.start()
+    }
 }

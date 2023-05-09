@@ -14,4 +14,6 @@ interface PersonDao {
     fun update(person: Person): Int
     @Delete
     fun delete(person: Person): Int
+    @Query("DELETE FROM Person")
+    fun clear()
 }

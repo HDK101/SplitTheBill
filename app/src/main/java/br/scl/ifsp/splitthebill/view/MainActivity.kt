@@ -1,6 +1,8 @@
 package br.scl.ifsp.splitthebill.view
 
 import android.app.Activity
+import android.app.AlertDialog
+import android.content.DialogInterface
 import android.content.Intent
 import android.os.Build
 import androidx.appcompat.app.AppCompatActivity
@@ -36,11 +38,12 @@ class MainActivity : BaseActivity() {
         amb.list.adapter = billAdapter
         refreshPersonList()
 
-        carl = registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
-            if (result.resultCode == Activity.RESULT_OK) {
-                refreshPersonList()
+        carl =
+            registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
+                if (result.resultCode == Activity.RESULT_OK) {
+                    refreshPersonList()
+                }
             }
-        }
 
         amb.list.onItemClickListener =
             AdapterView.OnItemClickListener { p0, p1, position, p3 ->
@@ -55,11 +58,25 @@ class MainActivity : BaseActivity() {
     }
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
-        return when(item.itemId) {
+        return when (item.itemId) {
             R.id.addPerson -> {
                 val personIntent = Intent(this@MainActivity, PersonActivity::class.java)
                 personIntent.putExtra(EXTRA_OPERATION, PersonActivity.Operation.CREATE)
                 carl.launch(personIntent)
+                true
+            }
+            R.id.clearAll -> {
+                AlertDialog.Builder(this)
+                    .setMessage("Tem certeza que deseja apagar todas as pessoas?")
+                    .setPositiveButton(
+                        "Sim"
+                    ) { _, _ ->
+                        personController.clear {
+                            refreshPersonList()
+                        }
+                    }
+                    .setNegativeButton("Não", null)
+                    .show()
                 true
             }
             else -> false
@@ -78,7 +95,7 @@ class MainActivity : BaseActivity() {
         val position = (item.menuInfo as AdapterView.AdapterContextMenuInfo).position
         val person = personList[position]
 
-        return when(item.itemId) {
+        return when (item.itemId) {
             R.id.editPerson -> {
                 val personIntent = Intent(this@MainActivity, PersonActivity::class.java)
                 personIntent.putExtra(EXTRA_OPERATION, PersonActivity.Operation.EDIT)
