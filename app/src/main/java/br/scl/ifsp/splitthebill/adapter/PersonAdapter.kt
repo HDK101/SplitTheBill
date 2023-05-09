@@ -32,8 +32,8 @@ class PersonAdapter(context: Context, private val personList: MutableList<Person
         }
 
         (tilePersonView.tag as TilePersonViewHolder).personNameText.text = person.name
-        (tilePersonView.tag as TilePersonViewHolder).personSpentValueText.text = "R$ ${person.spent}"
-        (tilePersonView.tag as TilePersonViewHolder).personToPayText.text = "R$ ${person.toPay}"
+        (tilePersonView.tag as TilePersonViewHolder).personSpentValueText.text = "R$ ${String.format("%.2f", person.spent)}"
+        (tilePersonView.tag as TilePersonViewHolder).personToPayText.text = "R$ ${String.format("%.2f", person.toPay)}"
 
         return tilePersonView
     }

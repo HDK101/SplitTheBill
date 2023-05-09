@@ -53,7 +53,7 @@ class MainActivity : AppCompatActivity() {
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
         return when(item.itemId) {
-            R.id.addBill -> {
+            R.id.addPerson -> {
                 val personIntent = Intent(this@MainActivity, PersonActivity::class.java)
                 personIntent.putExtra("operation", PersonActivity.Operation.CREATE)
                 carl.launch(personIntent)
@@ -68,7 +68,7 @@ class MainActivity : AppCompatActivity() {
         v: View?,
         menuInfo: ContextMenu.ContextMenuInfo?
     ) {
-        menuInflater.inflate(R.menu.menu_main, menu)
+        menuInflater.inflate(R.menu.menu_person, menu)
     }
 
     override fun onCreateOptionsMenu(menu: Menu?): Boolean {
@@ -77,10 +77,14 @@ class MainActivity : AppCompatActivity() {
     }
 
     fun updatePersonPerPay() {
+        if (personList.isEmpty()) return
+
         val total = personList
             .map { person -> person.spent }
             .reduce { a, b -> a + b }
         val limitPerPerson = total / personList.size.toDouble()
+
+        supportActionBar?.subtitle = "Total: R$ ${String.format("%.2f", total)}"
 
         personList.forEach { person ->
             person.toPay = limitPerPerson - person.spent
@@ -91,6 +95,7 @@ class MainActivity : AppCompatActivity() {
         personList.clear()
         personList.addAll((applicationContext as SplitTheBillApplication).getPersonRoom().getPersonDao().retrieve())
         updatePersonPerPay()
+
         billAdapter.notifyDataSetChanged()
     }
 }
