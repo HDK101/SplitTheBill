@@ -37,10 +37,10 @@ class PersonAdapter(context: Context, private val personList: MutableList<Person
             "Deve"
         }
         else if (person.toPay < 0) {
-            "Paga"
+            "Recebe"
         }
         else {
-            "Não deve nem paga"
+            "Não deve nem recebe"
         }
 
         (tilePersonView.tag as TilePersonViewHolder).personNameText.text = person.name
